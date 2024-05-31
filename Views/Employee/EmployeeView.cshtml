@@ -93,7 +93,7 @@
 
 <script>
     $(document).ready(function () {
-        var successMessage = '@(ViewBag.SuccessMessage ?? "")';
+        var successMessage = '@(TempData["SuccessMessage"] ?? "")';
         if (successMessage) {
             $('#successToastBody').text(successMessage);
             $('#successToast').toast('show');

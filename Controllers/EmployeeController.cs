@@ -5,6 +5,7 @@ using PROG7311_POE_Part_2.Models;
 using PROG7311_POE_Part_2.ViewModels;
 using System.Diagnostics;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 namespace PROG7311_POE_Part_2.Controllers
 {
@@ -69,8 +70,15 @@ namespace PROG7311_POE_Part_2.Controllers
 					return View("EmployeeView", viewModel);
 				}
 
-				// Calls method to hash the password
-				CreatePasswordHash(viewModel.User.UserPassword, out this.salt, out this.hashedPassword);
+                // Checks if the username already exists
+                if (!PasswordValidation(viewModel.User.UserPassword))
+                {
+                    ViewBag.ErrorMessage = "Pasword is too weak.";
+                    return View("EmployeeView", viewModel);
+                }
+
+                // Calls method to hash the password
+                CreatePasswordHash(viewModel.User.UserPassword, out this.salt, out this.hashedPassword);
 
 				// Checks if Password and Password Confirmation match
 				if (!VerifyPassword(viewModel.ConfirmPassword, this.salt, this.hashedPassword))
@@ -95,8 +103,8 @@ namespace PROG7311_POE_Part_2.Controllers
 
 				await _dbContext.SaveChangesAsync();
 
-                ViewBag.SuccessMessage = "Farmer was added successfully.";
-                return RedirectToAction("EmployeeView", viewModel);
+                TempData["SuccessMessage"] = "Farmer was added successfully.";
+				return RedirectToAction("EmployeeView", viewModel);
 			}
 			catch (Exception ex)
 			{
@@ -117,18 +125,37 @@ namespace PROG7311_POE_Part_2.Controllers
 			return _dbContext.Users.Any(u => u.Username == username);
 		}
 
-		//-----------------------------------------------------------------------------------------------//
+        //-----------------------------------------------------------------------------------------------//
+        /// <summary>
+        /// Method that checks if the password meets the requirements
+        /// </summary>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public bool PasswordValidation(string password)
+        {
+            if (string.IsNullOrEmpty(password))
+            {
+                return false;
+            }
 
-		// Hash Methods
-		#region Hashing
-		//-----------------------------------------------------------------------------------------------//
-		/// <summary>
-		/// Method to hash the password
-		/// </summary>
-		/// <param name="password"></param>
-		/// <param name="salt"></param>
-		/// <param name="hash"></param>
-		public void CreatePasswordHash(string password, out string salt, out string hash)
+            // At least one upper case letter, one lower case letter, one digit, one special character, minimum 5 characters long
+            var regex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{5,}$");
+
+            return regex.IsMatch(password);
+        }
+
+        //-----------------------------------------------------------------------------------------------//
+
+        // Hash Methods
+        #region Hashing
+        //-----------------------------------------------------------------------------------------------//
+        /// <summary>
+        /// Method to hash the password
+        /// </summary>
+        /// <param name="password"></param>
+        /// <param name="salt"></param>
+        /// <param name="hash"></param>
+        public void CreatePasswordHash(string password, out string salt, out string hash)
 		{
 			using (RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider())
 			{
