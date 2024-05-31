@@ -37,7 +37,7 @@ This is a web application that is a farming hub that allows for all farmers to a
 
 ### Employee
 - Username: Joe_Russell
-- Password: "J03Russ3\\"
+- Password: J03Russ3\\\
 
 ### Farmer
 - Username: Koos_GreenThumb
