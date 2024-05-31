@@ -1,0 +1,151 @@
+﻿@using PROG7311_POE_Part_2.ViewModels;
+@model UserViewModel;
+
+<head>
+    <!-- Include Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+
+<header class="user-banner-style bg-success">
+    <h1 style="font-size: 50px; color: white; margin:20px;">Welcome</h1>
+</header>
+
+
+<form asp-action="VerifyUserDetails" method="post">
+    <!-- Grid -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); border-radius: 10px; margin-top: 150px;">
+
+        <div class="card" style="border-color: #4CAF50; grid-column: 1; margin-right:50px; height:300px; background-color:white; ">
+            <div class="card-header text-white bg-success text-center">
+                <h3>Employee Login</h3>
+            </div>
+
+            <div style="display: flex; justify-content: center;">
+                <label style="width: 300px; white-space: normal;margin-top: 10px;">Please use the provided credentials to experience the app as an Employee.</label>
+            </div>
+
+            <div class="grid-base" style="grid-column: 2;">
+                <!-- Employee Username Example Labels -->
+                <div class="grid-item-left">
+                    <label class="input-label">Username:</label>
+                </div>
+                <div class="grid-item-right">
+                    <label>Joe_Russell</label>
+                </div>
+
+                <!-- Employee Password Example Labels -->
+                <div class="grid-item-left">
+                    <label class="input-label">Password:</label>
+                </div>
+                <div class="grid-item-right">
+                    <label>J03Russ3\\</label>
+                </div>
+
+                <div style="grid-column: span 2;">
+                    <!-- Button to Log In -->
+                    <div class="grid-item-center">
+                        <a asp-controller="Login" asp-action="EmployeeLogin" class="btn btn-success" style="width: 200px">Log In as an Employee</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="border-color: #4CAF50; grid-column: 2;">
+            <div class="card-header text-white bg-success text-center">
+                <h2>Login</h2>
+            </div>
+            <div class="card-body">
+                <div class="grid-base">
+                    <!-- Username Label and TextBox -->
+                    <div class="grid-item-left">
+                        <label class="input-label">Username:</label>
+                    </div>
+                    <div class="grid-item-right">
+                        <input asp-for="User.Username" type="text" class="form-control" placeholder="Eg. Joe_Russell" required>
+                    </div>
+                    <!-- Password Label and PasswordBox -->
+                    <div class="grid-item-left" style="grid-column: 1;">
+                        <label class="input-label">Password:</label>
+                    </div>
+                    <div class="grid-item-right" style="grid-column: 2;">
+                        <input asp-for="User.UserPassword" type="password" class="form-control" placeholder="Eg. J03Russ3\\" required>
+                    </div>
+
+                    <!-- Non-functional Remember User Label and Checkbox -->
+                    <div class="grid-item-left">
+                        <input type="checkbox" style="margin-right:10px;">
+                    </div>
+                    <div class="grid-item-right">
+                        <label class="input-label" style="font-weight: normal; padding-left:0;">Remember me</label>
+                    </div>
+
+                    <div style="grid-column: span 2;">
+                        <!-- Button to Log In -->
+                        <div class="grid-item-center">
+                            <button type="submit" class="btn btn-success" style="width: 200px">Log In</button>
+                        </div>
+
+                        <!-- Button to Switch to Register View -->
+                        <div class="grid-item-center">
+                            <a asp-controller="Login" asp-action="SwitchToRegisterView" class="btn btn-success" style="width: 200px">Create New Account</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="border-color: #4CAF50; grid-column: 3; margin-left:50px; height:300px;">
+            <div class="card-header text-white bg-success text-center">
+                <h3>Farmer Login</h3>
+            </div>
+            <div style="display: flex; justify-content: center;">
+                <label style="width: 300px; white-space: normal; margin-top: 10px;">Pleases use the provided credentials to experience the app as a Farmer.</label>
+            </div>
+            <div class="grid-base" style="grid-column: 2;">
+                <!-- Farmer Username Example Labels -->
+                <div class="grid-item-left">
+                    <label class="input-label">Username:</label>
+                </div>
+                <div class="grid-item-right">
+                    <label>Koos_GreenThumb</label>
+                </div>
+                <!-- Farmer Password Example Labels -->
+                <div class="grid-item-left">
+                    <label class="input-label">Password:</label>
+                </div>
+                <div class="grid-item-right">
+                    <label>Farm@2024!Koos</label>
+                </div>
+                <div style="grid-column: span 2;">
+                    <!-- Button to Log In -->
+                    <div class="grid-item-center">
+                        <a asp-controller="Login" asp-action="FarmerLogin" class="btn btn-success" style="width: 200px">Log In as Farmer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Handling -->
+    <div class="toast" id="errorToast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000" style="position: fixed; bottom: 40%; left: 50%; transform: translate(-50%, 0);">
+        <div class="toast-header">
+            <i class="fas fa-exclamation-triangle mr-2"></i>
+            <strong class="mr-auto" style="margin-left:5px;">Error</strong>
+        </div>
+        <div class="toast-body" id="errorToastBody">
+        </div>
+    </div>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var errorMessage = '@(ViewBag.ErrorMessage ?? "")';
+        if (errorMessage) {
+            $('#errorToastBody').text(errorMessage);
+            $('#errorToast').toast('show');
+        }
+    });
+</script>

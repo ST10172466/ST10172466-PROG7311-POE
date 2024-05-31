@@ -1,0 +1,74 @@
+﻿@using PROG7311_POE_Part_2.ViewModels;
+@model DisplayProductViewModel
+
+<head>
+    <link href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script type="text/javascript" src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"> </script>
+
+    <style>
+        #tblProducts {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+            #tblProducts th, #tblProducts td {
+                border: 1px solid black;
+                padding: 8px;
+                text-align: center;
+            }
+
+            #tblProducts th {
+                background-color: lightgray;
+                color: black;
+            }
+
+            #tblProducts td {
+                background-color: white;
+                color: black;
+            }
+    </style>
+</head>
+
+<body style="background-color: white;">
+
+    @if (Model.ProductList == null || Model.ProductList.Count == 0)
+    {
+        <p style="color: black; margin: 100px; text-align: center;">No Products Added</p>
+    }
+    else
+    {
+        <form id="filterForm" asp-controller="DisplayFarmerProduct" asp-action="DisplayFarmerProductView">
+
+            <div id="productTable" style="margin-top:50px;">
+                @await Html.PartialAsync("_ProductTable", Model.ProductList)
+            </div>
+        </form>
+    }
+
+</body>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-----------Script to populate table------------->
+<script>
+    $(document).ready(function () {
+        $('#filterForm').submit(function (event) {
+            event.preventDefault();
+
+            $.ajax({
+                url: '/DisplayProduct/FilterProducts', // replace with your actual URL
+                type: 'POST',
+                data: $('#filterForm').serialize(),
+                success: function (data) {
+                    $('#productTable').html(data);
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+</script>

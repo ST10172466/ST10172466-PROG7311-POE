@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PROG7311_POE_Part_2</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/PROG7311_POE_Part_2.styles.css" asp-append-version="true" />
+    <style>
+        .navbar-nav .active {
+            border-bottom: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        @{
+            var currentView = ViewContext.RouteData.Values["action"].ToString();
+            var showNavbar = !(currentView.Equals("LoginView", StringComparison.OrdinalIgnoreCase) || currentView.Equals("RegisterView", StringComparison.OrdinalIgnoreCase));
+            var roleID = Context.Request.Cookies["RoleID"];
+        }
+
+        @if (showNavbar && User.Identity.IsAuthenticated)
+        {
+            <nav class="navbar navbar-expand-lg navbar-light bg-success">
+                <span class="navbar-brand mr-5 text-white font-weight-bold" style="margin:10px; margin-left:30px;margin-right:30px;font-size:35px;">ST10172466</span>
+
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <!-- If statement to ensure only Employees can access full list of products-->
+                        @if (roleID == "0")
+                        {
+                            <li class="nav-item @(currentView == "EmployeeView" ? "active" : "")">
+                                <a class="nav-link" style="color: white" asp-area="" asp-controller="Employee" asp-action="EmployeeView">Add Farmer</a>
+                            </li>
+                            <li class="nav-item @(currentView == "DisplayProductView" ? "active" : "")">
+                                <a class="nav-link" style="color: white" asp-area="" asp-controller="DisplayProduct" asp-action="DisplayProductView">View Products</a>
+                            </li>
+                        }
+                        <!-- If statement to ensure only Farmers can access their own products-->
+                        @if (roleID == "1")
+                        {
+                            <li class="nav-item @(currentView == "FarmerView" ? "active" : "")">
+                                <a class="nav-link" style="color: white" asp-area="" asp-controller="Farmer" asp-action="FarmerView">Add Products</a>
+                            </li>
+                            <li class="nav-item @(currentView == "DisplayFarmerProductView" ? "active" : "")">
+                                <a class="nav-link" style="color: white" asp-area="" asp-controller="DisplayFarmerProduct" asp-action="DisplayFarmerProductView">View Your Products</a>
+                            </li>
+                        }
+
+                        <li class="nav-item @(currentView == "EducationHubView" ? "active" : "")">
+                            <a class="nav-link" style="color: white" asp-area="" asp-controller="EducationHub" asp-action="EducationHubView">Education Hub</a>
+                        </li>
+
+                        <li class="nav-item @(currentView == "ForumView" ? "active" : "")">
+                            <a class="nav-link" style="color: white" asp-area="" asp-controller="Forum" asp-action="ForumView">Discussion Forum</a>
+                        </li>
+
+                        <li class="nav-item @(currentView == "MarketplaceView" ? "active" : "")">
+                            <a class="nav-link" style="color: white" asp-area="" asp-controller="Marketplace" asp-action="MarketplaceView">Marketplace</a>
+                        </li>
+
+                        <li class="nav-item @(currentView == "FundingView" ? "active" : "")">
+                            <a class="nav-link" style="color: white" asp-area="" asp-controller="Funding" asp-action="FundingView">Funding Opportunities</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" style="color: white" href="#" id="logoutLink">Logout</a>
+
+                            <form id="logoutForm" asp-controller="Logout" asp-action="Logout" method="post" style="display: none;">
+                                @Html.AntiForgeryToken()
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        }
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        document.getElementById("logoutLink").addEventListener("click", function () {
+            document.getElementById("logoutForm").submit();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+﻿@model List<ForumModel>
+
+<div>
+    <h1 class="my-4">Discussion Board</h1>
+
+    <div style="text-align: left; background-color: white; padding:10px;">
+
+    @foreach (var discussion in Model)
+    {
+        <div style="margin-bottom: 20px;">
+            <h5>@discussion.Title</h5>
+            <p>@discussion.Content</p>
+            <div style="padding-left: 30px; border-left: 1px solid #ddd;">
+                <div>
+                    <h6 class="text-muted">@discussion.User1</h6>
+                    <p>@discussion.Message1</p>
+                </div>
+                <div style="padding-left: 30px; border-left: 1px solid #ddd;">
+                    <div>
+                        <h6 class="text-muted">@discussion.User2</h6>
+                        <p>@discussion.Message2</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    </div>
+</div>

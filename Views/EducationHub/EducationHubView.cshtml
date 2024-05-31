@@ -1,0 +1,20 @@
+﻿@model List<EducationHubModel>
+
+<div class="container">
+    <h1 class="my-4">Articles on Green Energy Solutions in Agriculture</h1>
+
+    <div class="row">
+        @foreach (var article in Model)
+        {
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">@article.Title</h5>
+                        <p class="card-text">@article.Summary</p>
+                        <a href="@article.Link" class="btn btn-primary">Read More</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

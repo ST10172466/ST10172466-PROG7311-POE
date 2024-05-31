@@ -1,0 +1,196 @@
+htmhtml {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+/*
+    Body Styles
+*/
+/*-----------------------------------------------------------------------------------------------*/
+body {
+    overflow: hidden;
+    background-color: #f2f2f2;
+}
+
+.bg-success {
+    background-color: #4CAF50;
+}
+
+.center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/*--------------------------------------------------------- REGISTER & LOGIN ----------------------------------------------------------*/
+/*
+    Register and Login Background and Border Style
+*/
+/*-----------------------------------------------------------------------------------------------*/
+.user-border-style {
+    border-width: 5px;
+    opacity: 0.9;
+    border-style: solid;
+    border-image: linear-gradient(to bottom right, #462AD8, #DA34AE, #8A16C1);
+    border-image-slice: 1;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+}
+
+.user-banner-style {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 100px;
+    z-index: 1;
+}
+
+/*--------------------------------------------------------- GENERAL ----------------------------------------------------------*/
+/*
+    General Background
+*/
+/*-----------------------------------------------------------------------------------------------*/
+.general-background {
+    background-color: #292951;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -5;
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+/*
+    General Label Style
+*/
+/*-----------------------------------------------------------------------------------------------*/
+.input-label {
+    font-size: 16px;
+    font-family: 'Segoe UI';
+    color: black;
+    font-weight: bold;
+    padding: 0;
+    vertical-align: middle;
+    text-align: right;
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+/*
+    General Textbox Style
+*/
+/*-----------------------------------------------------------------------------------------------*/
+.input-textbox {
+    width: 150px;
+    height: 28px;
+    margin: 5px 0 0 0;
+    vertical-align: middle;
+    background: none;
+    border: none;
+    caret-color: DarkGray;
+    font-size: 15px;
+    font-family: 'Segoe UI';
+    color: DarkGray;
+    border-bottom: 1px solid DarkGray;
+}
+
+    .input-textbox:focus {
+        outline: none;
+        border: none;
+        border-bottom: 2px solid Black;
+        color: black;
+        font-size: 16px;
+    }
+
+/*-----------------------------------------------------------------------------------------------*/
+/*
+    General ComboBox Style
+*/
+/*-----------------------------------------------------------------------------------------------*/
+.input-combobox {
+    width: 150px;
+    height: 28px;
+    vertical-align: middle;
+    font-size: 16px;
+    font-family: 'Segoe UI';
+    background: none;
+    color: DarkGray;
+    caret-color: LightGray;
+    border: none;
+    border-bottom: 1px solid LightGray;
+}
+
+    .input-combobox:focus {
+        outline: none;
+        border: none;
+        border-bottom: 2px solid White;
+        color: white;
+        font-size: 17px;
+    }
+
+.combo-box-container {
+    margin: 10px;
+}
+
+.combo-box {
+    width: 200px;
+    padding: 5px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+/*
+    General Grid Styles
+*/
+/*-----------------------------------------------------------------------------------------------*/
+.grid-base {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-radius: 10px;
+}
+
+.grid-item-left {
+    padding: 10px;
+    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.grid-item-right {
+    padding: 10px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.grid-item-center {
+    padding: 10px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

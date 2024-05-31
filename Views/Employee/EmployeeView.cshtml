@@ -1,0 +1,112 @@
+﻿@using PROG7311_POE_Part_2.ViewModels;
+@model UserViewModel;
+
+<head>
+    <!-- Include Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+
+<form asp-action="AddFarmerDetails" method="post">
+
+    <div class="d-flex flex-column justify-content-center align-items-center">
+
+        <div class="card" style="border-color: #4CAF50; margin: 50px;">
+            <div class="card-header text-white bg-success text-center">
+                <h2>Enter Farmer Details</h2>
+            </div>
+
+            <div class="card-body">
+                <!-- Grid -->
+                <div class="grid-base">
+                    <!-- Name Label and TextBox -->
+                    <div class="grid-item-left">
+                        <label class="input-label">Name:</label>
+                    </div>
+                    <div class="grid-item-right">
+                        <input asp-for="User.Name" type="text" class="input-textbox" style="width:200px" placeholder="Eg. Koos" required />
+                    </div>
+
+                    <!-- Surname Label and TextBox -->
+                    <div class="grid-item-left">
+                        <label class="input-label">Surname:</label>
+                    </div>
+                    <div class="grid-item-right">
+                        <input asp-for="User.Surname" type="text" class="input-textbox" style="width:200px" placeholder="Eg. Box" required />
+                    </div>
+
+                    <!-- Username Label and TextBox -->
+                    <div class="grid-item-left">
+                        <label class="input-label">Username:</label>
+                    </div>
+                    <div class="grid-item-right">
+                        <input asp-for="User.Username" type="text" class="input-textbox" style="width:200px" placeholder="Eg. Koos_GreenThumb" required />
+                    </div>
+
+                    <!-- Password Label and PasswordBox -->
+                    <div class="grid-item-left">
+                        <label class="input-label">Password:</label>
+                    </div>
+                    <div class="grid-item-right">
+                        <input asp-for="User.UserPassword" type="password" class="input-textbox" style="width:200px" placeholder="Eg. Farm@2024!Koos" required />
+                    </div>
+
+                    <!-- Confirm Password Label and PasswordBox -->
+                    <div class="grid-item-left">
+                        <label class="input-label">Confirm Password:</label>
+                    </div>
+                    <div class="grid-item-right">
+                        <input asp-for="ConfirmPassword" type="password" class="input-textbox" style="width:200px" placeholder="Eg. Farm@2024!Koos" required />
+                    </div>
+                </div>
+
+                <!-- Button to Add Farmer -->
+                <div class="grid-item-center">
+                    <button class="btn btn-success" style="width:200px" type="submit">Add Farmer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Handling -->
+    <div class="toast" id="successToast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000" style="position: fixed; bottom: 40%; left: 50%; transform: translate(-50%, 0);">
+        <div class="toast-header">
+            <i class="fas fa-check-circle mr-2"></i>
+            <strong class="mr-auto" style="margin-left:5px;">Success</strong>
+        </div>
+        <div class="toast-body" id="successToastBody">
+        </div>
+    </div>
+
+    <!-- Error Handling -->
+    <div class="toast" id="errorToast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000" style="position: fixed; bottom: 40%; left: 50%; transform: translate(-50%, 0);">
+        <div class="toast-header">
+            <i class="fas fa-exclamation-triangle mr-2"></i>
+            <strong class="mr-auto" style="margin-left:5px;">Error</strong>
+        </div>
+        <div class="toast-body" id="errorToastBody">
+        </div>
+    </div>
+</form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var successMessage = '@(ViewBag.SuccessMessage ?? "")';
+        if (successMessage) {
+            $('#successToastBody').text(successMessage);
+            $('#successToast').toast('show');
+        }
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        var errorMessage = '@(ViewBag.ErrorMessage ?? "")';
+        if (errorMessage) {
+            $('#errorToastBody').text(errorMessage);
+            $('#errorToast').toast('show');
+        }
+    });
+</script>

@@ -1,0 +1,79 @@
+﻿@using PROG7311_POE_Part_2.ViewModels;
+@model IEnumerable<ProductTableViewModel>
+
+<style>
+    #tblProducts {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #tblProducts th, #tblProducts td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
+        #tblProducts th {
+            background-color: lightgray;
+            color: black;
+        }
+
+        #tblProducts td {
+            background-color: white;
+            color: black;
+        }
+
+        #tblProducts tbody {
+            display: block;
+            height: 400px;
+            overflow-y: scroll;
+        }
+
+            /* Hide scrollbar for Chrome, Safari and Opera */
+            #tblProducts tbody::-webkit-scrollbar {
+                display: none;
+            }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        #tblProducts tbody {
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+
+            #tblProducts thead, #tblProducts tbody tr {
+                display: table;
+                width: 100%;
+                table-layout: fixed;
+            }
+</style>
+
+<table id="tblProducts">
+    <!-- table headers -->
+    <thead>
+        <tr>
+            <th>Farmer</th>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Production Date</th>
+            <th>Description</th>
+            <th>Stock</th>
+        </tr>
+    </thead>
+
+    <!-- table data -->
+    <tbody>
+        @foreach (var viewModel in Model)
+        {
+            <tr>
+                <td>@viewModel.User.Name @viewModel.User.Surname</td>
+                <td>@viewModel.Product.Name</td>
+                <td>@viewModel.Category.CategoryName</td>
+                <td>@($"R{viewModel.Product.Price}")</td>
+                <td>@viewModel.Product.ProductionDate.ToString("yyyy-MM-dd")</td>
+                <td>@viewModel.Product.Description</td>
+                <td>@viewModel.Product.Stock</td>
+            </tr>
+        }
+    </tbody>
+</table>

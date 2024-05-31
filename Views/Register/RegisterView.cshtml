@@ -1,0 +1,100 @@
+﻿@using PROG7311_POE_Part_2.ViewModels;
+@model UserViewModel;
+
+<head>
+    <!-- Include Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+
+<header class="user-banner-style bg-success">
+    <h1 style="font-size: 50px; color: white; margin:20px;">Welcome</h1>
+</header>
+
+<form asp-action="AddUserDetails" method="post">
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); border-radius: 10px; margin-top: 150px;">
+        <div class="card" style="border-color: #4CAF50; grid-column: 2;">
+            <div class="card-header text-white bg-success">
+                <h2>Register</h2>
+            </div>
+            <div class="card-body">
+
+                <!-- Grid -->
+                <div class="grid-base">
+                    <!-- Name Label and TextBox -->
+                    <div class="grid-item-left">
+                        <label class="input-label">Name:</label>
+                    </div>
+                    <div class="grid-item-right">
+                        <input asp-for="User.Name" type="text" class="input-textbox" placeholder="Eg. Joe" required />
+                    </div>
+
+                    <!-- Surname Label and TextBox -->
+                    <div class="grid-item-left">
+                        <label class="input-label">Surname:</label>
+                    </div>
+                    <div class="grid-item-right">
+                        <input asp-for="User.Surname" type="text" class="input-textbox" placeholder="Eg. Russell" required />
+                    </div>
+
+                    <!-- Username Label and TextBox -->
+                    <div class="grid-item-left">
+                        <label class="input-label">Username:</label>
+                    </div>
+                    <div class="grid-item-right">
+                        <input asp-for="User.Username" type="text" class="input-textbox" placeholder="Eg. Joe_Russell" required />
+                    </div>
+
+                    <!-- Password Label and PasswordBox -->
+                    <div class="grid-item-left">
+                        <label class="input-label">Password:</label>
+                    </div>
+                    <div class="grid-item-right">
+                        <input asp-for="User.UserPassword" type="password" class="input-textbox" placeholder="Eg. J03Russ3\\" required />
+                    </div>
+
+                    <!-- Confirm Password Label and PasswordBox -->
+                    <div class="grid-item-left">
+                        <label class="input-label">Confirm Password:</label>
+                    </div>
+                    <div class="grid-item-right">
+                        <input asp-for="ConfirmPassword" type="password" class="input-textbox" placeholder="Eg. J03Russ3\\" required />
+                    </div>
+
+                    <!-- Button to Register -->
+                    <div class="grid-item-left">
+                        <button class="btn btn-success" type="submit">Register</button>
+                    </div>
+
+                    <!-- Button to Switch to Login View -->
+                    <div class="grid-item-right">
+                        <a asp-action="RedirectToLoginView" asp-controller="Register" class="btn btn-success">Existing Account</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Handling -->
+    <div class="toast" id="errorToast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000" style="position: fixed; bottom: 40%; left: 50%; transform: translate(-50%, 0);">
+        <div class="toast-header">
+            <i class="fas fa-exclamation-triangle mr-2"></i>
+            <strong class="mr-auto" style="margin-left:5px;">Error</strong>
+        </div>
+        <div class="toast-body" id="errorToastBody">
+        </div>
+    </div>
+</form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var errorMessage = '@(ViewBag.ErrorMessage ?? "")';
+        if (errorMessage) {
+            $('#errorToastBody').text(errorMessage);
+            $('#errorToast').toast('show');
+        }
+    });
+</script>
