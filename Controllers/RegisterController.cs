@@ -48,74 +48,74 @@ namespace PROG7311_POE_Part_2.Controllers
 			return View("RegisterView", viewModel);
 		}
 
-		//-----------------------------------------------------------------------------------------------//
-		/// <summary>
-		/// Method to add the user details
-		/// </summary>
-		/// <param name="viewModel"></param>
-		/// <returns></returns>
-		[HttpPost]
-		public async Task<IActionResult> AddUserDetails(UserViewModel viewModel)
-		{
-			try
-			{
-				// Checks if the username already exists
-				if (UserNameValidation(viewModel.User.Username))
-				{
+        //-----------------------------------------------------------------------------------------------//
+        /// <summary>
+        /// Method to add the user details
+        /// </summary>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> AddUserDetails(UserViewModel viewModel)
+        {
+            try
+            {
+                // Check if the username already exists
+                if (UserNameValidation(viewModel.User.Username))
+                {
                     ViewBag.ErrorMessage = "Username already exists.";
-					return View("RegisterView", viewModel);
-				}
+                    return View("RegisterView", viewModel);
+                }
 
-                // Checks if the username already exists
+                // Check if the password is valid
                 if (!PasswordValidation(viewModel.User.UserPassword))
                 {
                     ViewBag.ErrorMessage = "Password is too weak.";
                     return View("RegisterView", viewModel);
                 }
 
-                // Calls method to hash the password
-                CreatePasswordHash(viewModel.User.UserPassword, out this.salt, out this.hashedPassword);
+                // Create hashed password
+                CreatePasswordHash(viewModel.User.UserPassword, out var salt, out var hashedPassword);
 
-				// Checks if Password and Password Confirmation match
-				if (!VerifyPassword(viewModel.ConfirmPassword, this.salt, this.hashedPassword))
-				{
+                // Verify if passwords match
+                if (!VerifyPassword(viewModel.ConfirmPassword, salt, hashedPassword))
+                {
                     ViewBag.ErrorMessage = "Passwords do not match.";
-					return View("RegisterView", viewModel);
-				}
+                    return View("RegisterView", viewModel);
+                }
 
-				var role = 0;
-				var newUser = new UserModel
-				{
-					Name = viewModel.User.Name,
-					Surname = viewModel.User.Surname,
-					RoleID = role,
-					Username = viewModel.User.Username,
-					UserPassword = this.hashedPassword,
-					Salt = this.salt
-				};
+                // Create new user object
+                var newUser = new UserModel
+                {
+                    Name = viewModel.User.Name,
+                    Surname = viewModel.User.Surname,
+                    RoleID = 0, //Assuming default role is 0
+                    Username = viewModel.User.Username,
+                    UserPassword = hashedPassword,
+                    Salt = salt
+                };
 
-				_dbContext.Users.Add(newUser);
-				_dbContext.SaveChanges();
+                // Add new user to the database
+                _dbContext.Users.Add(newUser);
+                await _dbContext.SaveChangesAsync();
 
-				await _dbContext.SaveChangesAsync();
+                return RedirectToAction("LoginView", "Login");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error: {ex}");
+                ViewBag.ErrorMessage = "An error occurred while processing your request.";
+                return View("RegisterView", viewModel);
+            }
+        }
 
-				return RedirectToAction("LoginView", "Login");
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine($"Error: {ex}");
-			}
 
-			return View("RegisterView", viewModel);
-		}
-
-		//-----------------------------------------------------------------------------------------------//
-		/// <summary>
-		/// Method that checks if the inputed username already exists in the database
-		/// </summary>
-		/// <param name="username"></param>
-		/// <returns></returns>
-		private bool UserNameValidation(string username)
+        //-----------------------------------------------------------------------------------------------//
+        /// <summary>
+        /// Method that checks if the inputed username already exists in the database
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        private bool UserNameValidation(string username)
 		{
 			return _dbContext.Users.Any(u => u.Username == username);
 		}

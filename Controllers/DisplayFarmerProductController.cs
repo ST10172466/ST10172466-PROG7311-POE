@@ -38,13 +38,15 @@ namespace PROG7311_POE_Part_2.Controllers
                 if (userIDClaim != null && Guid.TryParse(userIDClaim.Value, out Guid currentUserID))
                 {
                     // Populates User List with all Farmers
-                    viewModel.UsernameList = (from user in _dbContext.Users
-                                              where user.RoleID == 1
-                                              select user.Username).ToList();
+                    viewModel.UsernameList = _dbContext.Users
+                                               .Where(user => user.RoleID == 1)
+                                               .Select(user => user.Username)
+                                               .ToList();
 
                     // Populates Category List with all Categories
                     viewModel.CategoryList = _dbContext.Category.Select(c => c.CategoryName).ToList();
 
+                    // Retrieve products for the current user
                     var query = _dbContext.Product.Include(p => p.User).Include(p => p.Category).Where(p => p.User.UserID == currentUserID).AsQueryable();
 
                     viewModel.ProductList = query.Select(p => new ProductTableViewModel

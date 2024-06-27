@@ -38,14 +38,16 @@ namespace PROG7311_POE_Part_2.Controllers
 
 				if (userIDClaim != null && Guid.TryParse(userIDClaim.Value, out Guid currentUserID))
 				{
-					// Populates User List with all Farmers
-					viewModel.UsernameList = (from user in _dbContext.Users
-											  where user.RoleID == 1
-											  select user.Username).ToList();
+                    // Populates User List with all Farmers
+                    viewModel.UsernameList = _dbContext.Users
+                                               .Where(user => user.RoleID == 1)
+                                               .Select(user => user.Username)
+                                               .ToList();
 
-					// Populates Category List with all Categories
-					viewModel.CategoryList = _dbContext.Category.Select(c => c.CategoryName).ToList();
+                    // Populates Category List with all Categories
+                    viewModel.CategoryList = _dbContext.Category.Select(c => c.CategoryName).ToList();
 
+                    // Retrieve products for the current user
                     var query = _dbContext.Product.Include(p => p.User).Include(p => p.Category).AsQueryable();
 
                     viewModel.ProductList = query.Select(p => new ProductTableViewModel
@@ -83,8 +85,10 @@ namespace PROG7311_POE_Part_2.Controllers
 		{
 			try
 			{
+                // Base query to include related User and Category entities
                 var query = _dbContext.Product.Include(p => p.User).Include(p => p.Category).AsQueryable();
 
+                // Filter by selected user
                 if (!string.IsNullOrEmpty(viewModel.SelectedUser))
 				{
 					var selectedUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Username == viewModel.SelectedUser);
@@ -94,7 +98,8 @@ namespace PROG7311_POE_Part_2.Controllers
 					}
 				}
 
-				if (!string.IsNullOrEmpty(viewModel.SelectedCategory))
+                // Filter by selected category
+                if (!string.IsNullOrEmpty(viewModel.SelectedCategory))
 				{
 					var selectedCategory = await _dbContext.Category.FirstOrDefaultAsync(c => c.CategoryName == viewModel.SelectedCategory);
 					if (selectedCategory != null)
@@ -103,21 +108,25 @@ namespace PROG7311_POE_Part_2.Controllers
 					}
 				}
 
-				if (viewModel.MinPrice <= viewModel.MaxPrice)
+                // Filter by price range
+                if (viewModel.MinPrice <= viewModel.MaxPrice)
 				{
 					query = query.Where(p => p.Price >= viewModel.MinPrice && p.Price <= viewModel.MaxPrice);
 				}
 
-				if (viewModel.MinDate <= viewModel.MaxDate)
+                // Filter by production date range
+                if (viewModel.MinDate <= viewModel.MaxDate)
 				{
 					query = query.Where(p => p.ProductionDate >= viewModel.MinDate && p.ProductionDate <= viewModel.MaxDate);
 				}
 
-				if (viewModel.MinStock <= viewModel.MaxStock)
+                // Filter by stock range
+                if (viewModel.MinStock <= viewModel.MaxStock)
 				{
 					query = query.Where(p => p.Stock >= viewModel.MinStock && p.Stock <= viewModel.MaxStock);
 				}
 
+                // Retrieve filtered products
                 viewModel.ProductList = await query.Select(p => new ProductTableViewModel
                 {
                     Product = p,
@@ -125,9 +134,11 @@ namespace PROG7311_POE_Part_2.Controllers
                     Category = p.Category
                 }).ToListAsync();
 
+                // Populate user and category lists for the view model
                 viewModel.UsernameList = await (from user in _dbContext.Users
 												where user.RoleID == 1
 												select user.Username).ToListAsync();
+
 				viewModel.CategoryList = await _dbContext.Category.Select(c => c.CategoryName).ToListAsync();
 			}
 			catch (Exception ex)
@@ -136,9 +147,9 @@ namespace PROG7311_POE_Part_2.Controllers
 			}
 
             return PartialView("_ProductTable", viewModel.ProductList);
-
         }
 
+		//-----------------------------------------------------------------------------------------------//
     }
 }
 //------------------------------------------..oo00 End of File 00oo..-------------------------------------------//

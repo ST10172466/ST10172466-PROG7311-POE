@@ -59,93 +59,94 @@ namespace PROG7311_POE_Part_2.Controllers
 			return new ProductViewModel();
 		}
 
-		//-----------------------------------------------------------------------------------------------//
-		/// <summary>
-		/// Method to add the user details
-		/// </summary>
-		/// <param name="viewModel"></param>
-		/// <returns></returns>
-		[HttpPost]
-		public async Task<IActionResult> AddProductDetails(ProductViewModel viewModel)
-		{
-			try
-			{
-				// Retrieve the User ID claim from the authentication ticket
-				var userIdClaim = User.FindFirst("UserID");
+        //-----------------------------------------------------------------------------------------------//
+        /// <summary>
+        /// Method to add the user details
+        /// </summary>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> AddProductDetails(ProductViewModel viewModel)
+        {
+            try
+            {
+                // Retrieve the User ID claim from the authentication ticket
+                var userIdClaim = User.FindFirst("UserID");
 
-				// Variable to store the found User ID
-				var foundUserID = Guid.Empty;
+                // Check if the User ID in the authentication ticket is null, if not converts it to a GUID
+                if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
+                {
+                    ViewBag.ErrorMessage = "Invalid user ID.";
+                    return View("FarmerView", viewModel);
+                }
 
-				// Checks if the User ID in the authentication ticket is null, if not converts it to a GUID
-				if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out Guid userId))
-				{
-					foundUserID = userId;
-				}
-
-				// Prevents incorrect Product Name input
-				if (viewModel.Product.Name.Equals(string.Empty))
-				{
+                // Prevent incorrect Product Name input
+                if (string.IsNullOrWhiteSpace(viewModel.Product.Name))
+                {
                     ViewBag.ErrorMessage = "Invalid Product Name.";
-					return View("FarmerView", viewModel);
-				}
+                    return View("FarmerView", viewModel);
+                }
 
-				// Prevents incorrect Price input
-				if (viewModel.Product.Price <= 0)
-				{
+                // Prevent incorrect Price input
+                if (viewModel.Product.Price <= 0)
+                {
                     ViewBag.ErrorMessage = "Invalid Product Price.";
-					return View("FarmerView", viewModel);
-				}
+                    return View("FarmerView", viewModel);
+                }
 
-                // Prevents incorrect Stock input
-                if (viewModel.Product.Stock <= 0
-					|| viewModel.Product.Stock > 1000)
-				{
-					ViewBag.ErrorMessage = "Invalid Stock Level.";
-					return View("FarmerView", viewModel);
-				}
+                // Prevent incorrect Stock input
+                if (viewModel.Product.Stock <= 0 || viewModel.Product.Stock > 1000)
+                {
+                    ViewBag.ErrorMessage = "Invalid Stock Level.";
+                    return View("FarmerView", viewModel);
+                }
 
-				// Retrieves stored User ID and associated User
-				var userCurrentID = UserHelperClass.CurrentUserID;
-				var selectedUser = _dbContext.Users.FirstOrDefault(u => u.UserID == userCurrentID);
+                // Retrieve stored User ID and associated User
+                var selectedUser = _dbContext.Users.FirstOrDefault(u => u.UserID == userId);
 
-				if (selectedUser != null)
-				{
-					var selectedCategory = _dbContext.Category.FirstOrDefault(c => c.CategoryName == viewModel.SelectedCategory);
+                if (selectedUser == null)
+                {
+                    ViewBag.ErrorMessage = "User not found.";
+                    return View("FarmerView", viewModel);
+                }
 
-					if (selectedCategory != null)
-					{
-						// Add new Product
-						var newProduct = new ProductModel
-						{
-							UserID = selectedUser.UserID,
-							CategoryID = selectedCategory.CategoryID,
-							Name = viewModel.Product.Name.Trim(),
-							Price = viewModel.Product.Price,
-							ProductionDate = viewModel.Product.ProductionDate,
-							Description = viewModel.Product.Description.Trim(),
-							Stock = viewModel.Product.Stock
-						};
+                var selectedCategory = _dbContext.Category.FirstOrDefault(c => c.CategoryName == viewModel.SelectedCategory);
 
-						_dbContext.Product.Add(newProduct);
-						_dbContext.SaveChanges();
+                if (selectedCategory == null)
+                {
+                    ViewBag.ErrorMessage = "Category not found.";
+                    return View("FarmerView", viewModel);
+                }
 
-						await _dbContext.SaveChangesAsync();
+                // Add new Product
+                var newProduct = new ProductModel
+                {
+                    UserID = selectedUser.UserID,
+                    CategoryID = selectedCategory.CategoryID,
+                    Name = viewModel.Product.Name.Trim(),
+                    Price = viewModel.Product.Price,
+                    ProductionDate = viewModel.Product.ProductionDate,
+                    Description = viewModel.Product.Description.Trim(),
+                    Stock = viewModel.Product.Stock
+                };
 
-						viewModel.CategoryList = RetrieveCategories().CategoryList;
+                _dbContext.Product.Add(newProduct);
+                await _dbContext.SaveChangesAsync();
 
-                        ViewBag.SuccessMessage = "Product was added successfully.";
-                        return View("FarmerView", viewModel);
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-			}
+                viewModel.CategoryList = RetrieveCategories().CategoryList;
+                ViewBag.SuccessMessage = "Product was added successfully.";
+                return View("FarmerView", viewModel);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error: {ex}");
+                ViewBag.ErrorMessage = "An error occurred while processing your request.";
+            }
 
-			viewModel.CategoryList = RetrieveCategories().CategoryList;
-			return View("FarmerView", viewModel);
-		}
+            viewModel.CategoryList = RetrieveCategories().CategoryList;
+            return View("FarmerView", viewModel);
+        }
 
-		//-----------------------------------------------------------------------------------------------//
-	}
+        //-----------------------------------------------------------------------------------------------//
+    }
 }

@@ -52,75 +52,76 @@ namespace PROG7311_POE_Part_2.Controllers
 			return View("EmployeeView", viewModel);
 		}
 
-		//-----------------------------------------------------------------------------------------------//
-		/// <summary>
-		/// Method to add the user details
-		/// </summary>
-		/// <param name="viewModel"></param>
-		/// <returns></returns>
-		[HttpPost]
-		public async Task<IActionResult> AddFarmerDetails(UserViewModel viewModel)
-		{
-			try
-			{
-				// Checks if the username already exists
-				if (UserNameValidation(viewModel.User.Username))
-				{
-                    ViewBag.ErrorMessage = "Username already exists.";
-					return View("EmployeeView", viewModel);
-				}
-
+        //-----------------------------------------------------------------------------------------------//
+        /// <summary>
+        /// Method to add the user details
+        /// </summary>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> AddFarmerDetails(UserViewModel viewModel)
+        {
+            try
+            {
                 // Checks if the username already exists
+                if (UserNameValidation(viewModel.User.Username))
+                {
+                    ViewBag.ErrorMessage = "Username already exists.";
+                    return View("EmployeeView", viewModel);
+                }
+
+                // Checks if the password is valid
                 if (!PasswordValidation(viewModel.User.UserPassword))
                 {
-                    ViewBag.ErrorMessage = "Pasword is too weak.";
+                    ViewBag.ErrorMessage = "Password is too weak.";
                     return View("EmployeeView", viewModel);
                 }
 
                 // Calls method to hash the password
-                CreatePasswordHash(viewModel.User.UserPassword, out this.salt, out this.hashedPassword);
+                CreatePasswordHash(viewModel.User.UserPassword, out var salt, out var hashedPassword);
 
-				// Checks if Password and Password Confirmation match
-				if (!VerifyPassword(viewModel.ConfirmPassword, this.salt, this.hashedPassword))
-				{
+                // Checks if Password and Password Confirmation match
+                if (!VerifyPassword(viewModel.ConfirmPassword, salt, hashedPassword))
+                {
                     ViewBag.ErrorMessage = "Passwords do not match.";
-					return View("EmployeeView", viewModel);
-				}
+                    return View("EmployeeView", viewModel);
+                }
 
-				// Creates new User with the Role of Farmer
-				var newUser = new UserModel
-				{
-					Name = viewModel.User.Name.Trim(),
-					Surname = viewModel.User.Surname.Trim(),
-					RoleID = 1,
-					Username = viewModel.User.Username.Trim(),
-					UserPassword = this.hashedPassword,
-					Salt = this.salt
-				};
+                // Creates new User with the Role of Farmer
+                var newUser = new UserModel
+                {
+                    Name = viewModel.User.Name.Trim(),
+                    Surname = viewModel.User.Surname.Trim(),
+                    RoleID = 1, // Assuming role ID 1 is for Farmer
+                    Username = viewModel.User.Username.Trim(),
+                    UserPassword = hashedPassword,
+                    Salt = salt
+                };
 
-				_dbContext.Users.Add(newUser);
-				_dbContext.SaveChanges();
-
-				await _dbContext.SaveChangesAsync();
+                // Adds new User to the database
+                _dbContext.Users.Add(newUser);
+                await _dbContext.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = "Farmer was added successfully.";
-				return RedirectToAction("EmployeeView", viewModel);
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine($"Error: {ex}");
-			}
+                return RedirectToAction("EmployeeView", viewModel);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error: {ex}");
+                ViewBag.ErrorMessage = "An error occurred while adding the farmer.";
+            }
 
-			return View("EmployeeView", viewModel);
-		}
+            return View("EmployeeView", viewModel);
+        }
 
-		//-----------------------------------------------------------------------------------------------//
-		/// <summary>
-		/// Method that checks if the inputed username already exists in the database
-		/// </summary>
-		/// <param name="username"></param>
-		/// <returns></returns>
-		private bool UserNameValidation(string username)
+
+        //-----------------------------------------------------------------------------------------------//
+        /// <summary>
+        /// Method that checks if the inputed username already exists in the database
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        private bool UserNameValidation(string username)
 		{
 			return _dbContext.Users.Any(u => u.Username == username);
 		}
